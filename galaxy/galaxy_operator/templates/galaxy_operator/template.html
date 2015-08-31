@@ -90,9 +90,18 @@
                             </div>
                             <!-- /input-group -->
                         </li>
+                        {%if menu %}
+                        {% for option in menu %}
                         <li>
-                            <a href="{% url 'operator:register' %}" {% if register %} class="active" {% endif %}><i class="fa fa-inbox fa-fw"></i> Register a New Package</a>
+                            <a href="{% url option.url %}" {% if option.activeOn == active %} class="active" {% endif %}>
+                                <i class="{{ option.imgClass }}"></i> {{ option.label }}</a>
                         </li>
+                        {% endfor %}
+                        {% else %}
+                        <li>
+                            <a href="#"><i class="fa glyphicon-warning-sign"></i> Load Menu in View</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

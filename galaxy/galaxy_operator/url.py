@@ -3,10 +3,18 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
+    #Pagina principal del GalaxyOperator
     url(r'^$', views.index, name='index'),
-    url(r'^auth/$', views.auth, name='auth'),
-    url(r'^logout/$', views.userLogout, name='userLogout'),
-    url(r'^register/$', views.registerPackage, name='register'),
-    url(r'^(?P<pk>[0-9]+)/package/$', views.package, name='package'),
 
+    #Pagina de Login
+    url(r'^auth/$', views.auth, name='auth'),
+
+    #Pagina pibote de logout
+    url(r'^logout/$', views.userLogout, name='userLogout'),
+
+    #Pagina para registrar un nuevo paquete
+    url(r'^register/$', views.registerPackage, name='register'),
+
+    #Pagina para consultar un paquete
+    url(r'^package/$', views.package, name='package'),
 ]
