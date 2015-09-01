@@ -15,6 +15,9 @@ urlpatterns = [
     #Pagina para registrar un nuevo paquete
     url(r'^register/$', views.registerPackage, name='register'),
 
+    #Pagina para registrar un nuevo Cliente
+    url(r'^client/$', views.client, name='client'),
+
     #Pagina para consultar un paquete
     url(r'^package/$', views.package, name='package'),
 ]

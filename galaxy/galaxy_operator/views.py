@@ -6,7 +6,7 @@
 #  Para definir una nueva vista, hay que verificar queel modelo este #
 #  cargado en la importacion de modelos; si es una pagina interna se #
 #  debe anteponer a la funcion el shorcut login_requiered y cargar el#
-#  Menu con la funcion loadContext y enviarla a la vista.            #
+#  contexto basico con la funcion loadContext y enviarla a la vista.            #
 ######################################################################
 
 
@@ -22,6 +22,8 @@ from .models import Client, Package, PackageType, menuOption
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 
+from .forms import *
+
 #Cargar el Menu
 def loadMenu():
     m = menuOption.objects.all().order_by('order')
@@ -29,9 +31,10 @@ def loadMenu():
 
 #Cualquier carga inicial de las vistas debe colocarse aca.
 #Esta funcion debe ser cargada en cada inicio de vista interna
-def loadContext():
+def loadContext(active):
     context = {}
     context['menu'] = loadMenu()
+    context['active'] = active
 
     return context
 
@@ -71,7 +74,7 @@ def auth(request):
 #Pagina de Bienvenida a Galaxy Operator
 @login_required(redirect_field_name='', login_url='operator:auth')
 def index(request):
-    context = loadContext()
+    context = loadContext('welcome')
     if request.user.is_authenticated():
         context['user'] = request.user
         return render(request, 'galaxy_operator/index.html', context)
@@ -81,21 +84,26 @@ def index(request):
 #Pagina para registrar un nuevo paquete
 @login_required(redirect_field_name='', login_url='operator:auth')
 def registerPackage(request):
-    context = loadContext()
-    context['active'] = 'register'
-    return render(request, 'galaxy_operator/register.html', context)
+    context = loadContext('register')
+    if request.POST:
+        try:
+            client = Client.objects.get(email=request.POST['email'])
+        except client.DoesNotExist:
+            return render(request, 'galaxy_operator/register.html', context)
+        context['client'] = client
+        return render(request, 'galaxy_operator/register.html', context)
+    else:
+        return render(request, 'galaxy_operator/register.html', context)
 
 #El metodo de Consulta de Paquetes valida inicialmente si fue cargada con un POST
 #Si no viene por un POST muestra la vista solo con el formulario de consulta de tracking number
 #Si viene por un POST intenta buscar el paquete y mostrar el detalle junto con las funciones adicionales
 @login_required(redirect_field_name='', login_url='operator:auth')
 def package(request):
-    context = loadContext()
-    context['active'] = 'track'
+    context = loadContext('track')
     if request.POST:
         try:
             pq = Package.objects.get(tracking=request.POST['tracking'])
-
         except Package.DoesNotExist:
             context['msg'] = "Package doesn't Exist" #TODO: Cargar el Mensaje desde el administrador de contenido
             return render(request, 'galaxy_operator/package.html', context)
@@ -104,3 +112,9 @@ def package(request):
         return render(request, 'galaxy_operator/package.html', context)
     else:
         return render(request, 'galaxy_operator/package.html', context)
+
+@login_required(redirect_field_name='', login_url='operator:auth')
+def client(request):
+    context = loadContext('client')
+    context['mytest'] = clientForm
+    return render(request, 'galaxy_operator/client.html', context)

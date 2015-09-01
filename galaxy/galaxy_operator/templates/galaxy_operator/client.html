@@ -1,0 +1,19 @@
+{% extends 'galaxy_operator/template.html' %}
+{% block tittle %}Register Client{% endblock %}
+{% block WindowTittle %} Register a New Client {% endblock %}
+{% block innerContent %}
+
+    {% load widget_tweaks %}
+
+    <div class="row">
+        <div class="col-lg-5">
+    {% for field in mytest %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field|add_class:'form-control' }}
+            <p class="help-block">{{ field.help_text }}</p>
+        </div>
+    {% endfor %}
+        </div>
+    </div>
+{% endblock %}
