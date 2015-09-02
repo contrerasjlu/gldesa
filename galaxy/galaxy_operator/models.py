@@ -17,7 +17,6 @@ class PackageType(models.Model):
 # Esta clase es creada para manejar los tipos de atributos de un paquete en particular, 
 # solo deben crearse para cuando el tipo de paquete no comparta los mismos atributos con 
 # el resto, es decir, no lo pueda almacenar el objeto 'Paquete' por si solo.
-
 class PackageTypeAttribute(models.Model):
     ATTR_TYPE = (('I', 'Integer'),('V', 'Varchar'),)
     name = models.CharField(max_length=10)
@@ -64,6 +63,7 @@ class StateAttribute(models.Model):
     def __unicode__(self):
         return self.name
 
+#Maestro de Clientes
 class Client(models.Model):
     STATES = (
         ('AL','Alabama'),('AK','Alaska'),('AZ','Arizona'),
@@ -92,17 +92,35 @@ class Client(models.Model):
     def __unicode__(self):
         return self.name
 
+#Maestro de Destinatarios
+class Receiver(models.Model):
+    name = models.CharField(max_length=50)
+    address = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=10)
+    country = models.CharField(max_length=10)
+    zip = models.IntegerField()
+    telephone = models.CharField(max_length=20)
+    email = models.EmailField(default='@')
+    def __unicode__(self):
+        return self.name
+
 # Maestro de Paquetes
 class Package(models.Model):
     content = models.TextField(max_length=250)
-    origin = models.ForeignKey(Location)
-    route = models.ForeignKey(Route)
     operator = models.ForeignKey(User)
-    value = models.IntegerField()
     packageType = models.ForeignKey(PackageType)
     client = models.ForeignKey(Client, default=1)
+    receiver = models.ForeignKey(Receiver,default=1)
     tracking = models.CharField(max_length=17)
     currentState = models.ForeignKey(State)
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
+    weight = models.IntegerField(default=0)
+    mesurement = models.IntegerField(default=0)
+    ensurance = models.BooleanField(default=True)
+    declaredValue = models.IntegerField(default=0)
+    value = models.IntegerField(default=0)
     def __unicode__(self):
         return self.tracking
 
@@ -122,6 +140,7 @@ class PackagesRoute(models.Model):
     def __unicode__(self):
         return self.route
 
+# En esta clase se alamcena los valores especiales de los paquetes.
 class PackageDetail(models.Model):
     attribute = models.ForeignKey(PackageTypeAttribute)
     package = models.ForeignKey(Package)

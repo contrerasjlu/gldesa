@@ -6,7 +6,6 @@ from django import forms
 from .models import *
 
 class clientForm(ModelForm):
-    forms.TextInput(attrs={'class': 'form-control'})
     class Meta:
         model = Client
         fields = '__all__'
@@ -15,3 +14,13 @@ class clientForm(ModelForm):
             'address': 'Ex: 1313 Mockinberg Lane',
             'city': 'Ex: Duluth'
         }
+
+class packageForm(ModelForm):
+    class Meta:
+        model = Package
+        exclude = ('operator','client','reciever','tracking','currentState')
+
+class recieverForm(ModelForm):
+    class Meta:
+        model = Receiver
+        fields = '__all__'

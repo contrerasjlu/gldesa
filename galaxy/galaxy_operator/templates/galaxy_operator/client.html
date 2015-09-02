@@ -6,14 +6,28 @@
     {% load widget_tweaks %}
 
     <div class="row">
-        <div class="col-lg-5">
-    {% for field in mytest %}
-        <div class="form-group">
-            <label>{{ field.label }}</label>
-            {{ field|add_class:'form-control' }}
-            <p class="help-block">{{ field.help_text }}</p>
-        </div>
-    {% endfor %}
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-user fa-fw"></i> Who's Sending this Package?
+                </div>
+                <div class="panel-body">
+                    <form method="post" action="" id="gls-form-client-TempReg">
+                    {% for field in client %}
+                        <div class="form-group">
+                            <label>{{ field.label }}</label>
+                            {% if field.label == 'Email' %}
+                                <input class="form-control" id="id_email" maxlength="254" name="email" type="email" value="{{ clientEmail }}" />
+                            {% else %}
+                                {{ field|add_class:'form-control' }}
+                            {% endif %}
+                            <p class="help-block">{{ field.help_text }}</p>
+                        </div>
+                    {% endfor %}
+                    <input type="submit" class="btn btn-default" value="Add Sender">
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

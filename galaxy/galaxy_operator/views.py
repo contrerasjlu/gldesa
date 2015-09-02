@@ -38,7 +38,8 @@ def loadContext(active):
 
     return context
 
-#La funcion solo desconecta al usuario de la sesion
+#La funcion solo desconecta al usuario de la sesion y lo redirige al
+#inicio de sesion de nuevo
 def userLogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('operator:auth'))
@@ -85,15 +86,22 @@ def index(request):
 @login_required(redirect_field_name='', login_url='operator:auth')
 def registerPackage(request):
     context = loadContext('register')
+    context['package'] = packageForm
+
     if request.POST:
         try:
-            client = Client.objects.get(email=request.POST['email'])
-        except client.DoesNotExist:
-            return render(request, 'galaxy_operator/register.html', context)
+            client = Client.objects.get(email=request.POST['clientEmail'])
+        except Client.DoesNotExist:
+            context['clientEmail'] = request.POST['clientEmail']
+            context['client'] = clientForm
+            return render(request, 'galaxy_operator/client.html', context)
         context['client'] = client
         return render(request, 'galaxy_operator/register.html', context)
     else:
         return render(request, 'galaxy_operator/register.html', context)
+
+
+
 
 #El metodo de Consulta de Paquetes valida inicialmente si fue cargada con un POST
 #Si no viene por un POST muestra la vista solo con el formulario de consulta de tracking number
@@ -104,6 +112,7 @@ def package(request):
     if request.POST:
         try:
             pq = Package.objects.get(tracking=request.POST['tracking'])
+
         except Package.DoesNotExist:
             context['msg'] = "Package doesn't Exist" #TODO: Cargar el Mensaje desde el administrador de contenido
             return render(request, 'galaxy_operator/package.html', context)
@@ -116,5 +125,5 @@ def package(request):
 @login_required(redirect_field_name='', login_url='operator:auth')
 def client(request):
     context = loadContext('client')
-    context['mytest'] = clientForm
+    context['client'] = clientForm
     return render(request, 'galaxy_operator/client.html', context)
